@@ -1,118 +1,62 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Mapbox 検索サンプル</title>
+    <title>聖地巡礼マップ</title>
 
-<!-- Mapbox GL -->
-<link href="https://api.mapbox.com/mapbox-gl-js/v3.12.0/mapbox-gl.css" rel="stylesheet">
-<script src="https://api.mapbox.com/mapbox-gl-js/v3.12.0/mapbox-gl.js"></script>
+    <!-- Mapbox -->
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.12.0/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.12.0/mapbox-gl.js"></script>
 
-<!-- Mapbox Search -->
-<script id="search-js" defer
-src="https://api.mapbox.com/search-js/v1.0.0/web.js">
-</script>
+    <!-- Mapbox Search -->
+    <script defer src="https://api.mapbox.com/search-js/v1.0.0/web.js"></script>
 
-<style>
-
-body{
-margin:0;
-padding:0;
-font-family:sans-serif;
-}
-
-#map{
-width:100%;
-height:100vh;
-}
-
-#search{
-position:absolute;
-top:15px;
-left:50%;
-transform:translateX(-50%);
-z-index:10;
-width:350px;
-background:white;
-padding:10px;
-border-radius:10px;
-box-shadow:0 4px 10px rgba(0,0,0,.3);
-}
-
-#search input{
-width:100%;
-padding:10px;
-font-size:16px;
-}
-
-</style>
-
+    <link rel="stylesheet" href="seitijunnreidayo.css">
 </head>
+
 <body>
 
-<div id="search"></div>
+    <!-- 検索バー -->
+    <div id="search-container">
+        <div id="search-box"></div>
+    </div>
 
-<div id="map"></div>
+    <!-- 地図 -->
+    <div id="map"></div>
 
-<script>
+    <!-- 地図操作ボタン -->
+    <div id="menu">
 
-const ACCESS_TOKEN = "pk.eyJ1Ijoia3Vyb211IiwiYSI6ImNtcDBqcGpjNjB3Y2EycnE2a3d6cGhmbG4ifQ.lQ-HQ1PQVvgpxSvj8J_9rA";
+        <button id="currentLocation">
+            📍 現在地
+        </button>
 
-mapboxgl.accessToken = ACCESS_TOKEN;
+        <button id="toggle3D">
+            🏙️ 3D表示
+        </button>
 
-const map = new mapboxgl.Map({
-container:"map",
-style:"mapbox://styles/mapbox/streets-v12",
-center:[139.767125,35.681236],
-zoom:12
-});
+        <button id="resetNorth">
+            🧭 北を上
+        </button>
 
-map.addControl(new mapboxgl.NavigationControl());
+    </div>
 
-let marker = null;
+    <!-- 座標表示 -->
+    <div id="coordinateBox">
+        <div>緯度：<span id="lat">---</span></div>
+        <div>経度：<span id="lng">---</span></div>
+    </div>
 
-window.addEventListener("load",()=>{
+    <!-- 読み込み中 -->
+    <div id="loading">
+        地図を読み込み中...
+    </div>
 
-const searchBox = new mapboxsearch.MapboxSearchBox();
-
-searchBox.accessToken = ACCESS_TOKEN;
-
-searchBox.options = {
-language:"ja",
-country:"JP"
-};
-
-searchBox.mapboxgl = mapboxgl;
-
-document.getElementById("search").appendChild(searchBox);
-
-searchBox.addEventListener("retrieve",(event)=>{
-
-const feature = event.detail.features[0];
-
-const lng = feature.geometry.coordinates[0];
-const lat = feature.geometry.coordinates[1];
-
-map.flyTo({
-center:[lng,lat],
-zoom:16
-});
-
-if(marker){
-marker.remove();
-}
-
-marker = new mapboxgl.Marker()
-.setLngLat([lng,lat])
-.addTo(map);
-
-});
-
-});
-
-</script>
+    <script src="seitijunnreidayo.js"></script>
 
 </body>
+
 </html>
