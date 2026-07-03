@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase + Mapbox</title>
+
+    <!-- Mapbox -->
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.13.0/mapbox-gl.css" rel="stylesheet">
+
+    <!-- 検索バー -->
+    <link href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.1.0/mapbox-gl-geocoder.css" rel="stylesheet">
+
+    <style>
+        body{
+            margin:0;
+            padding:0;
+        }
+
+        #map{
+            width:100%;
+            height:100vh;
+        }
+
+        .popup-img{
+            width:200px;
+            margin-top:10px;
+            border-radius:8px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div id="map"></div>
+
+<!-- Mapbox -->
+<script src="https://api.mapbox.com/mapbox-gl-js/v3.13.0/mapbox-gl.js"></script>
+
+<!-- 検索バー -->
+<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.1.0/mapbox-gl-geocoder.min.js"></script>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-analytics.js";
+import {
+    getFirestore,
+    collection,
+    getDocs,
+    getDoc
+} from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyCga1yFbLWdLXmMrNwScXuOGUWnz283eYs",
+    authDomain: "sisukai-121cf.firebaseapp.com",
+    projectId: "sisukai-121cf",
+    storageBucket: "sisukai-121cf.firebasestorage.app",
+    messagingSenderId: "83286825212",
+    appId: "1:83286825212:web:1cd57aecfb2308571a5f79",
+    measurementId: "G-GKWJ6BE9M2"
+};
+
+const app = initializeApp(firebaseConfig);
+getAnalytics(app);
+
+const db = getFirestore(app);
+
+console.log("Firebase接続成功！");
+
+mapboxgl.accessToken = "pk.eyJ1Ijoia3Vyb211IiwiYSI6ImNtcDBqcGpjNjB3Y2EycnE2a3d6cGhmbG4ifQ.lQ-HQ1PQVvgpxSvj8J_9rA";
+
+const map = new mapboxgl.Map({
+    container: "map",
+     style: "mapbox://styles/mapbox/standard",
+    center: [139.7671, 35.6812],
+    zoom: 12
+});
+// ←ここに追加
+map.on("style.load", () => {
+    map.setConfigProperty("basemap", "language", "ja");
+});
+
+// 検索バー
+map.addControl(
+    new MapboxGeocoder({
+        accessToken: mapboxgl.accessToken,
+        mapboxgl: mapboxgl,
+        marker: true,
+        placeholder: "場所を検索"
+    }),
+    "top-left"
+);
+
+// 現在地ボタン
+map.addControl(
+    new mapboxgl.GeolocateControl({
+        positionOptions:{
+            enableHighAccuracy:true
+        },
+        trackUserLocation:true,
+        showUserHeading:true
+    }),
+    "top-right"
+);
+
+// マーカー保存
+let markers = [];
+
+// スポット読み込み
+async function loadSpots() {
+
+    // 古いマーカー削除
+    markers.forEach(marker => marker.remove());
+    markers = [];
+
+    // spotとtitleを一括取得
+    const spotSnapshot = await getDocs(collection(db, "spot"));
+    const titleSnapshot = await getDocs(collection(db, "title"));
+
+    // titleを保存
+    const titleMap = {};
+
+    titleSnapshot.forEach(docSnap => {
+        titleMap[docSnap.ref.path] = docSnap.data().title_name;
+    });
+
+    // spotを表示
+    for (const docSnap of spotSnapshot.docs) {
+
+        const data = docSnap.data();
+
+        if (!data.coord) continue;
+
+        // タイトル取得
+        let titleName = "";
+
+        if (data.title_id) {
+            titleName = titleMap[data.title_id.path] || "";
+        }
+
+        // 画像
+        let imagePath;
+
+        if (data.image_url === "not_image") {
+            imagePath = "17dcbe459a812a827a0092ed44d9808f_t.jpeg";
+        } else {
+            imagePath = data.image_url;
+        }
+
+        // ポップアップ
+        const popupHTML = `
+            <h2>${titleName}</h2>
+            <h3>スポット情報</h3>
+            <p>${data.spot_info}</p>
+            <img src="${imagePath}" class="popup-img">
+        `;
+
+        const marker = new mapboxgl.Marker()
+            .setLngLat([
+                data.coord.longitude,
+                data.coord.latitude
+            ])
+            .setPopup(
+                new mapboxgl.Popup().setHTML(popupHTML)
+            )
+            .addTo(map);
+
+        markers.push(marker);
+    }
+}
+
+// ページを開いたときに1回だけ読み込む
+loadSpots();
+
+</script>
+
+</body>
+</html>
