@@ -1,5 +1,6 @@
 #事前にUnityでFirebaseとの接続をしている必要がある
 #CSVファイルの例はTeamsの開発書類/開発関連フォルダにいれておく
+#CSVファイルの作成はExcelから可能
 
 1. Assetsにで以下の通りにスクリプトを作成（フォルダが無ければ作成）
 　　Assets　――Editorフォルダ―FirestoreCsvImporter.cs
