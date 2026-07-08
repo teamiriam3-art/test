@@ -1,0 +1,14 @@
+#事前にUnityでFirebaseとの接続をしている必要がある
+#CSVファイルの例はTeamsの開発書類/開発関連フォルダにいれておく
+
+1. Assetsにで以下の通りにスクリプトを作成（フォルダが無ければ作成）
+　　Assets　――Editorフォルダ―FirestoreCsvImporter.cs
+	　　｜
+	　　｜
+	　　――scriptフォルダ―SpotData.cs
+
+2．作成したスクリプトの中身をGitHub上の同じファイルのコードに書き換える
+
+3. StreamingAssetsフォルダにCSVファイルを置く（CSVファイルはexcel-csv.csvか名前を変える場合は
+						FirestoreCsvImporter.csで取得するCSVのファイル名部分を変えて)
+　　Assets　――StreamingAssetsフォルダ―ここにCSVファイル
