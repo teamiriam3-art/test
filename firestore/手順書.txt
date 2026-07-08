@@ -4,10 +4,10 @@
 　40～62行目の部分とSpotDataファイルを書き換える必要がある
 
 1. Assetsにで以下の通りにスクリプトを作成（フォルダが無ければ作成）
-　　Assets　――Editorフォルダ―FirestoreCsvImporter.cs
+　　Assets――――Editorフォルダ―FirestoreCsvImporter.cs
 	　　｜
 	　　｜
-	　　――scriptフォルダ―SpotData.cs
+	　　――――――scriptフォルダ―SpotData.cs
 
 2．作成したスクリプトの中身をGitHub上の同じファイルのコードに書き換える
 
