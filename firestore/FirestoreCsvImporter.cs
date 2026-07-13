@@ -46,7 +46,8 @@ public class FirestoreCsvImporter
                 image_url = cols[4],
                 spot_info1 = cols[5],
                 spot_info2 = cols[6],
-                title_url = cols[7]
+                title_url = cols[7],
+                geo_hash = cols[8]
             };
 
             GeoPoint point = new GeoPoint(data.latitude, data.longitude);
@@ -58,7 +59,8 @@ public class FirestoreCsvImporter
                 { "image_url", data.image_url },
                 { "spot_name", data.spot_info1 },
                 { "spot_info", data.spot_info2 },
-                { "title_url", data.title_url }
+                { "title_url", data.title_url },
+                { "geo_hash", data.geo_hash }
             };
 
             try
