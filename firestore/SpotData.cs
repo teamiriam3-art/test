@@ -8,4 +8,5 @@ public class SpotData
     public string spot_info1 { get; set; }
     public string spot_info2 { get; set; }
     public string title_url { get; set; }
+    public string geo_hash { get; set; }
 }
